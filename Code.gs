@@ -1,14 +1,72 @@
 const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
 const FOLDER_ID = '1GBqXdt2b_VPgjhyH0frq-YnGF9aMOa8e';
 
-function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('Quản Lý Nhân Sự Dự Án')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+// ==========================================
+// 1. CÁC HÀM API GIAO TIẾP VỚI GITHUB (FETCH)
+// ==========================================
+
+// Hàm helper để trả về kết quả dưới dạng JSON
+function responseJson(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-// 1. Hàm thêm nhân sự mới kèm ảnh, Nhà thầu và Số điện thoại
+// Xử lý các yêu cầu lấy dữ liệu (GET)
+function doGet(e) {
+  // Nếu không có tham số truyền vào, báo lỗi hoặc có thể trả về thông báo
+  if (!e || !e.parameter || !e.parameter.action) {
+    return responseJson({ error: 'Vui lòng cung cấp tham số action.' });
+  }
+
+  const action = e.parameter.action;
+
+  if (action === 'getDuAn') {
+    const result = getDanhSachDuAn();
+    return responseJson(result);
+  }
+
+  if (action === 'getNhanSu') {
+    const idDuAn = e.parameter.idDuAn;
+    const result = getNhanSuTheoDuAn(idDuAn);
+    return responseJson(result);
+  }
+
+  return responseJson({ error: 'Hành động GET không hợp lệ.' });
+}
+
+// Xử lý các yêu cầu gửi dữ liệu/upload (POST)
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    const action = body.action;
+    const payload = body.payload;
+
+    if (action === 'themNhanSu') {
+      const result = themNhanSuMoiVoiAnh(payload);
+      return responseJson(result);
+    }
+
+    if (action === 'capNhatNhanSu') {
+      const result = capNhatThongTinNhanSu(payload);
+      return responseJson(result);
+    }
+
+    if (action === 'uploadFile') {
+      const result = uploadFileAndLink(payload.idNhanVien, payload.columnName, payload.fileData, payload.fileName);
+      return responseJson(result);
+    }
+
+    return responseJson({ success: false, error: 'Hành động POST không hợp lệ.' });
+  } catch (error) {
+    return responseJson({ success: false, error: 'Lỗi xử lý POST: ' + error.toString() });
+  }
+}
+
+// ==========================================
+// 2. CÁC HÀM XỬ LÝ LOGIC CHÍNH (GIỮ NGUYÊN)
+// ==========================================
+
+// Hàm thêm nhân sự mới kèm ảnh đại diện (Link xem trực tuyến)
 function themNhanSuMoiVoiAnh(data) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
@@ -21,13 +79,10 @@ function themNhanSuMoiVoiAnh(data) {
       const blob = Utilities.newBlob(bytes, contentType, data.fileName);
       const file = folder.createFile(blob);
       file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      fileUrl = 'https://lh3.googleusercontent.com/d/' + file.getId();
+      fileUrl = 'https://drive.google.com/file/d/' + file.getId() + '/view?usp=drivesdk';
     }
     
     const idMoi = 'NS_' + new Date().getTime();
-    
-    // Tạo một mảng dòng mới gồm 17 cột, đặt SĐT ở vị trí thứ 17 (index 16)
-    // Các cột hồ sơ scan (12-16) để trống ban đầu
     const rowData = [
       idMoi,          // 1. Mã nhân sự (A)
       data.idDuAn,    // 2. Mã dự án (B)
@@ -47,7 +102,6 @@ function themNhanSuMoiVoiAnh(data) {
       '',             // 16. ChungChi (P)
       data.sdt        // 17. Số điện thoại (Q)
     ];
-    
     sheet.appendRow(rowData);
     return { success: true };
   } catch (e) {
@@ -55,7 +109,7 @@ function themNhanSuMoiVoiAnh(data) {
   }
 }
 
-// 2. Hàm cập nhật thông tin nhân sự (Bao gồm Số điện thoại)
+// Hàm cập nhật thông tin nhân sự
 function capNhatThongTinNhanSu(data) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
@@ -79,7 +133,7 @@ function capNhatThongTinNhanSu(data) {
     sheet.getRange(targetRow, 9).setValue(data.thuongTru);
     sheet.getRange(targetRow, 10).setValue(data.tamTru);
     sheet.getRange(targetRow, 11).setValue(data.nhaThau);
-    sheet.getRange(targetRow, 17).setValue(data.sdt); // Cập nhật Số điện thoại ở cột 17 (Q)
+    sheet.getRange(targetRow, 17).setValue(data.sdt);
     
     if (data.fileData) {
       const folder = DriveApp.getFolderById(FOLDER_ID);
@@ -88,7 +142,7 @@ function capNhatThongTinNhanSu(data) {
       const blob = Utilities.newBlob(bytes, contentType, data.fileName);
       const file = folder.createFile(blob);
       file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      const fileUrl = 'https://lh3.googleusercontent.com/d/' + file.getId();
+      const fileUrl = 'https://drive.google.com/file/d/' + file.getId() + '/view?usp=drivesdk';
       sheet.getRange(targetRow, 6).setValue(fileUrl);
     }
     
@@ -98,21 +152,21 @@ function capNhatThongTinNhanSu(data) {
   }
 }
 
-// 3. Hàm chuẩn hóa link ảnh hiển thị trên web
+// Hàm chuẩn hóa link ảnh hiển thị trên giao diện web
 function chuyểnĐổiLinkẢnh(url) {
   if (!url || url === '') return 'https://via.placeholder.com/150';
-  if (url.includes('googleusercontent.com')) return url;
+  if (url.includes('thumbnail?id=')) return url;
+  
+  let match = url.match(/\/file\/d\/([^\/]+)/);
+  if (match && match[1]) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1000';
 
-  let match = url.match(/id=([^&]+)/);
-  if (match && match[1]) return 'https://lh3.googleusercontent.com/d/' + match[1];
-
-  match = url.match(/\/file\/d\/([^\/]+)/);
-  if (match && match[1]) return 'https://lh3.googleusercontent.com/d/' + match[1];
+  match = url.match(/id=([^&]+)/);
+  if (match && match[1]) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1000';
 
   return url;
 }
 
-// 4. Hàm lấy danh sách dự án
+// Hàm lấy danh sách dự án
 function getDanhSachDuAn() {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('DuAn');
@@ -128,7 +182,7 @@ function getDanhSachDuAn() {
   }
 }
 
-// 5. Hàm lấy danh sách nhân sự theo dự án (Lấy thêm Số điện thoại ở cột 17)
+// Hàm lấy danh sách nhân sự
 function getNhanSuTheoDuAn(idDuAn) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
@@ -146,14 +200,13 @@ function getNhanSuTheoDuAn(idDuAn) {
       thuongTru: row[8] ? row[8].toString() : '',
       tamTru: row[9] ? row[9].toString() : '',
       nhaThau: row[10] ? row[10].toString() : 'Chưa chọn',
-      sdt: row[16] ? row[16].toString() : '', // Lấy dữ liệu Số điện thoại ở cột số 17 (index 16)
+      sdt: row[16] ? row[16].toString() : '', 
       hoSo: { 
-        syll: row[11] ? row[11].toString() : '', 
-        lltp: row[12] ? row[12].toString() : '', 
-        cccdScan: row[13] ? row[13].toString() : '', 
-        gksk: row[14] ? row[14].toString() : '', 
-        chungChi: row[15] ? row[15].toString() : '', 
-        camKet: row[16] ? row[16].toString() : '' 
+        syll: row[11] ? row[11].toString() : '',       
+        lltp: row[12] ? row[12].toString() : '',       
+        cccdScan: row[13] ? row[13].toString() : '',   
+        gksk: row[14] ? row[14].toString() : '',       
+        chungChi: row[15] ? row[15].toString() : ''    
       }
     }));
   } catch(e) {
@@ -161,7 +214,7 @@ function getNhanSuTheoDuAn(idDuAn) {
   }
 }
 
-// 6. Hàm tải tài liệu scan lên hệ thống
+// Hàm tải tài liệu scan lên, trả về link MỞ XEM TRỰC TUYẾN
 function uploadFileAndLink(idNhanVien, columnName, fileData, fileName) {
   try {
     const folder = DriveApp.getFolderById(FOLDER_ID);
@@ -171,13 +224,15 @@ function uploadFileAndLink(idNhanVien, columnName, fileData, fileName) {
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     
-    const fileUrl = 'https://lh3.googleusercontent.com/d/' + file.getId();
+    const fileUrl = 'https://drive.google.com/file/d/' + file.getId() + '/view?usp=drivesdk';
+    
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
     const colIndex = headers.indexOf(columnName);
     
-    if (colIndex === -1) return { success: false, error: 'Không tìm thấy cột: ' + columnName };
+    if (colIndex === -1) return { success: false, error: 'Không tìm thấy tên cột "' + columnName + '" trên dòng tiêu đề Google Sheet.' };
+    
     for (let i = 1; i < data.length; i++) {
       if (data[i][0].toString() == idNhanVien.toString()) {
         sheet.getRange(i + 1, colIndex + 1).setValue(fileUrl);
@@ -187,25 +242,5 @@ function uploadFileAndLink(idNhanVien, columnName, fileData, fileName) {
     return { success: false, error: 'Không tìm thấy mã nhân viên' };
   } catch (e) {
     return { success: false, error: e.toString() };
-  }
-}
-
-// 7. Hàm bảo trì quét và sửa lỗi link ảnh hàng loạt trên sheet
-function suaTatCaLinkAnh() {
-  try {
-    const sheet = SpreadsheetApp.getActive().getSheetByName("NhanSu");
-    const data = sheet.getDataRange().getValues();
-
-    for(let i = 1; i < data.length; i++){
-      let url = data[i][5] ? data[i][5].toString() : "";
-      let match = url.match(/id=([^&]+)/);
-      if(match){
-        sheet.getRange(i + 1, 6).setValue(
-          "https://lh3.googleusercontent.com/d/" + match[1]
-        );
-      }
-    }
-  } catch(e) {
-    Logger.log("Lỗi chạy hàm sửa link ảnh: " + e.toString());
   }
 }
