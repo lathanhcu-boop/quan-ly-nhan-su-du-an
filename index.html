@@ -725,5 +725,21 @@ function requestPassword(tenNhaThau) {
     }).verifyNhaThauPassword(tempNhaThau, pass);
   }
 </script>
+  <div class="modal fade" id="passwordModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác thực Nhà thầu</h5>
+      </div>
+      <div class="modal-body">
+        <input type="password" id="inputPass" class="form-control" placeholder="Nhập mật khẩu nhà thầu...">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-primary" onclick="verifyAndProceed()">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
