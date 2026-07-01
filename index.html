@@ -703,6 +703,31 @@ function chuyenDoiLinkAnh(url) {
   }
   return url;
 }
+  // DÁN ĐOẠN CODE DƯỚI ĐÂY VÀO TRƯỚC DẤU ĐÓNG </script>
+  
+  let tempNhaThau = "";
+
+  function requestPassword(tenNhaThau) {
+    tempNhaThau = tenNhaThau;
+    // Mở modal nhập mật khẩu
+    const myModal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    myModal.show();
+  }
+
+  function verifyAndProceed() {
+    const pass = document.getElementById('inputPass').value;
+    
+    google.script.run.withSuccessHandler(function(isValid) {
+      if(isValid) {
+        alert("Xác thực thành công!");
+        bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide();
+        // Gọi hàm để tải danh sách nhân sự của nhà thầu đó
+        loadNhanSuByNhaThau(tempNhaThau); 
+      } else {
+        alert("Mật khẩu nhà thầu không chính xác!");
+      }
+    }).verifyNhaThauPassword(tempNhaThau, pass);
+  }
 </script>
 </body>
 </html>
