@@ -244,3 +244,22 @@ function uploadFileAndLink(idNhanVien, columnName, fileData, fileName) {
     return { success: false, error: e.toString() };
   }
 }
+/**
+ * Hàm kiểm tra mật khẩu nhà thầu
+ */
+function verifyNhaThauPassword(tenNhaThau, inputPass) {
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhaThau');
+  if (!sheet) return false; // Trả về false nếu không tìm thấy sheet NhaThau
+  
+  const data = sheet.getDataRange().getValues();
+  // Bỏ qua tiêu đề nếu có (giả sử dòng 1 là tiêu đề)
+  const rows = data.slice(1); 
+  
+  // Tìm nhà thầu trong danh sách (Cột A: Tên, Cột B: Mật khẩu)
+  const nhaThau = rows.find(row => row[0] === tenNhaThau);
+  
+  if (nhaThau && nhaThau[1].toString() === inputPass.toString()) {
+    return true; // Mật khẩu đúng
+  }
+  return false; // Mật khẩu sai
+}
