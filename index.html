@@ -16,6 +16,7 @@
     .hidden { display: none; }
     .staff-card { background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s; }
     .staff-card:hover { border-color: #0d6efd; }
+    .nha-thau-header { background-color: #e2e8f0; font-weight: bold; padding: 8px 12px; border-radius: 6px; color: #475569; margin-top: 15px; margin-bottom: 10px; }
     @media (max-width: 767.98px) {
       .container { padding-left: 12px; padding-right: 12px; }
       .btn-mobile-full { width: 100%; display: block; margin-bottom: 8px; }
@@ -37,31 +38,39 @@
         <select id="selectDuAn" class="form-select" required></select>
       </div>
       <div class="col-md-6">
+        <label class="small fw-bold">Chọn Nhà Thầu</label>
+        <select id="addNhaThau" class="form-select" required>
+          <option value="An ninh">An ninh</option>
+          <option value="Vệ sinh">Vệ sinh</option>
+          <option value="Cây xanh">Cây xanh</option>
+          <option value="Côn trùng">Côn trùng</option>
+        </select>
+      </div>
+      <div class="col-md-6">
         <label class="small fw-bold">Chọn ảnh nhân viên:</label>
         <input type="file" id="fileAnhInput" class="form-control" accept="image/*">
       </div>
       <div class="col-md-6"><label class="small fw-bold">Họ và Tên</label><input type="text" id="addTen" class="form-control"></div>
+      <div class="col-md-6"><label class="small fw-bold">Số điện thoại</label><input type="text" id="addSdt" class="form-control" placeholder="Nhập số điện thoại"></div>
       <div class="col-md-6"><label class="small fw-bold">Vị trí</label><input type="text" id="addViTri" class="form-control"></div>
-      
       <div class="col-md-6">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-          <label class="small fw-bold mb-0">Ngày hết hạn hợp đồng</label>
-          <div class="form-check form-switch mb-0">
-            <input class="form-check-input" type="checkbox" id="addCheckKhongThoiHan" onchange="toggleKhongThoiHan('add')">
-            <label class="form-check-label small text-success fw-bold" for="addCheckKhongThoiHan">Không thời hạn</label>
+        <div class="d-flex justify-content-between align-items-center">
+          <label class="small fw-bold">Ngày hết hạn hợp đồng</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="addVoThoiHan" onchange="toggleVoThoiHan('add')">
+            <label class="form-check-label small text-success fw-bold" for="addVoThoiHan">Vô thời hạn</label>
           </div>
         </div>
         <input type="date" id="addTinhTrang" class="form-control">
       </div>
-      
       <div class="col-md-6"><label class="small fw-bold">Ngày sinh</label><input type="date" id="addNgaySinh" class="form-control"></div>
       <div class="col-md-6"><label class="small fw-bold">CCCD</label><input type="text" id="addCccd" class="form-control"></div>
       <div class="col-md-6"><label class="small fw-bold">Thường trú</label><input type="text" id="addThuongTru" class="form-control"></div>
-      <div class="col-md-12"><label class="small fw-bold">Tạm trú</label><input type="text" id="addTamTru" class="form-control"></div>
+      <div class="col-md-6"><label class="small fw-bold">Tạm trú</label><input type="text" id="addTamTru" class="form-control"></div>
     </div>
     <div class="mt-3 row gx-2 gy-1">
-      <div class="col-md-auto"><button id="btnLuuNhanSu" class="btn btn-success btn-mobile-full" onclick="xuLyLuuNhanSuFull()">Lưu thông tin</button></div>
-      <div class="col-md-auto"><button class="btn btn-secondary btn-mobile-full" onclick="showManHinhDuAn()">Quay lại</button></div>
+      <div class="col-md-auto"><button type="button" id="btnLuuNhanSu" class="btn btn-success btn-mobile-full" onclick="xuLyLuuNhanSuFull()">Lưu thông tin</button></div>
+      <div class="col-md-auto"><button type="button" class="btn btn-secondary btn-mobile-full" onclick="showManHinhDuAn()">Quay lại</button></div>
     </div>
   </div>
 </div>
@@ -74,28 +83,36 @@
         <label class="small fw-bold">Thay ảnh đại diện (để trống nếu giữ nguyên):</label>
         <input type="file" id="editFileAnhInput" class="form-control" accept="image/*">
       </div>
-      <div class="col-md-6"><label class="small fw-bold">Họ và Tên</label><input type="text" id="editTen" class="form-control"></div>
-      <div class="col-md-6"><label class="small fw-bold">Vị trí</label><input type="text" id="editViTri" class="form-control"></div>
-      
       <div class="col-md-6">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-          <label class="small fw-bold mb-0">Ngày hết hạn hợp đồng</label>
-          <div class="form-check form-switch mb-0">
-            <input class="form-check-input" type="checkbox" id="editCheckKhongThoiHan" onchange="toggleKhongThoiHan('edit')">
-            <label class="form-check-label small text-success fw-bold" for="editCheckKhongThoiHan">Không thời hạn</label>
+        <label class="small fw-bold">Chọn Nhà Thầu</label>
+        <select id="editNhaThau" class="form-select" required>
+          <option value="An ninh">An ninh</option>
+          <option value="Vệ sinh">Vệ sinh</option>
+          <option value="Cây xanh">Cây xanh</option>
+          <option value="Côn trùng">Côn trùng</option>
+        </select>
+      </div>
+      <div class="col-md-6"><label class="small fw-bold">Họ và Tên</label><input type="text" id="editTen" class="form-control"></div>
+      <div class="col-md-6"><label class="small fw-bold">Số điện thoại</label><input type="text" id="editSdt" class="form-control"></div>
+      <div class="col-md-6"><label class="small fw-bold">Vị trí</label><input type="text" id="editViTri" class="form-control"></div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-center">
+          <label class="small fw-bold">Ngày hết hạn hợp đồng</label>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="editVoThoiHan" onchange="toggleVoThoiHan('edit')">
+            <label class="form-check-label small text-success fw-bold" for="editVoThoiHan">Vô thời hạn</label>
           </div>
         </div>
         <input type="date" id="editTinhTrang" class="form-control">
       </div>
-      
       <div class="col-md-6"><label class="small fw-bold">Ngày sinh</label><input type="date" id="editNgaySinh" class="form-control"></div>
       <div class="col-md-6"><label class="small fw-bold">CCCD</label><input type="text" id="editCccd" class="form-control"></div>
       <div class="col-md-6"><label class="small fw-bold">Thường trú</label><input type="text" id="editThuongTru" class="form-control"></div>
-      <div class="col-md-12"><label class="small fw-bold">Tạm trú</label><input type="text" id="editTamTru" class="form-control"></div>
+      <div class="col-md-6"><label class="small fw-bold">Tạm trú</label><input type="text" id="editTamTru" class="form-control"></div>
     </div>
     <div class="mt-3 row gx-2 gy-1">
-      <div class="col-md-auto"><button id="btnLuuCapNhat" class="btn btn-warning fw-bold text-dark btn-mobile-full" onclick="xuLyLuuCapNhatFull()">Lưu Thay Đổi</button></div>
-      <div class="col-md-auto"><button class="btn btn-secondary btn-mobile-full" onclick="quayLaiChiTietTuSua()">Hủy Bỏ</button></div>
+      <div class="col-md-auto"><button type="button" id="btnLuuCapNhat" class="btn btn-warning fw-bold text-dark btn-mobile-full" onclick="xuLyLuuCapNhatFull()">Lưu Thay Đổi</button></div>
+      <div class="col-md-auto"><button type="button" class="btn btn-secondary btn-mobile-full" onclick="quayLaiChiTietTuSua()">Hủy Bỏ</button></div>
     </div>
   </div>
 </div>
@@ -110,7 +127,7 @@
   <div id="manHinhDuAn">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
       <h2 class="text-primary fw-bold mb-0">Dự Án Đang Triển Khai</h2>
-      <button class="btn btn-primary btn-mobile-full" onclick="moManHinhThemNhanSu()">+ Thêm Nhân Viên</button>
+      <button type="button" class="btn btn-primary btn-mobile-full" onclick="moManHinhThemNhanSu()">+ Thêm Nhân Viên</button>
     </div>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="listDuAn">
       <div class="text-center w-100 py-4">Đang tải dữ liệu dự án...</div>
@@ -120,27 +137,28 @@
   <div id="manHinhNhanSu" class="hidden">
     <div class="d-flex justify-content-between align-items-center d-flex-mobile-column gap-2 mb-3">
       <h3 class="text-secondary mb-0 fw-bold" id="tenDuAnHienTai">Nhân sự dự án</h3>
-      <button class="btn btn-secondary btn-mobile-full" onclick="showManHinhDuAn()">⬅ Danh sách dự án</button>
+      <button type="button" class="btn btn-secondary btn-mobile-full" onclick="showManHinhDuAn()">⬅ Danh sách dự án</button>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2" id="listNhanSu"></div>
+    <div id="listNhanSuTheoNhaThau"></div>
   </div>
 
   <div id="manHinhChiTiet" class="hidden">
     <div class="mb-3 d-flex justify-content-between d-flex-mobile-column gap-2">
-      <button class="btn btn-secondary btn-mobile-full" onclick="quayLaiNhanSu()">⬅ Danh sách nhân sự</button>
-      <button class="btn btn-warning fw-bold text-dark btn-mobile-full" onclick="moManHinhCapNhat()">✏️ Cập nhật thông tin</button>
+      <button type="button" class="btn btn-secondary btn-mobile-full" onclick="quayLaiNhanSu()">⬅ Danh sách nhân sự</button>
+      <button type="button" class="btn btn-warning fw-bold text-dark btn-mobile-full" onclick="moManHinhCapNhat()">✏️ Cập nhật thông tin</button>
     </div>
     <div class="row g-3">
       <div class="col-md-5">
         <div class="card shadow-sm border-0 p-3 text-center bg-white">
           <img id="ctAnh" src="" class="rounded-circle mx-auto mb-2 shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
           <h4 id="ctTen" class="fw-bold text-dark mb-1"></h4>
-          <p id="ctViTri" class="badge bg-primary px-3 py-2 mb-3 text-wrap"></p>
+          <p id="ctViTri" class="badge bg-primary px-3 py-2 mb-1 text-wrap"></p>
+          <div class="mb-3"><span id="ctNhaThauBadge" class="badge bg-secondary px-3 py-1"></span></div>
           <hr class="my-2 text-muted">
           <div class="text-start bg-light p-2 rounded small">
-            <p class="mb-1"><strong>Hạn hợp đồng:</strong> <span id="ctTinhTrang" class="fw-bold text-success"></span></p>
+            <p class="mb-1"><strong>Số điện thoại:</strong> <span id="ctSdt" class="text-primary fw-bold"></span></p> 
             <p class="mb-1"><strong>Ngày sinh:</strong> <span id="ctNgaySinh"></span></p> 
-            <p class="mb-1"><strong>CCCD:</strong> <span id="ctCccd"></span></p>
+            <p class="mb-1"><strong>CCCD:</strong> <span id="ctCccd" class="text-dark fw-medium"></span></p>
             <p class="mb-1"><strong>Thường trú:</strong> <span id="ctThuongTru"></span></p>
             <p class="mb-0"><strong>Tạm trú:</strong> <span id="ctTamTru"></span></p>
           </div>
@@ -159,6 +177,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+// ==========================================
+// ⚠️ ĐIỀN ĐƯỜNG LINK WEB APP (URL TRIỂN KHAI) CỦA BẠN VÀO ĐÂY:
+// ==========================================
+const API_URL = "https://script.google.com/macros/s/AKfycbw6F-VWhg3f8fR3070nF_zG_G27mX0iZ31eH65X7N8/exec"; 
+
 var currentDuAnId = '';
 var currentStaffId = '';
 var currentDuAnIndex = -1;
@@ -166,31 +189,41 @@ var currentStaffIndex = -1;
 window.globalDuAnList = [];
 window.globalNhanSuList = [];
 
-// SỬA TRIỆT ĐỂ LỖI VÒNG LẶP CHẶN MẠNG TRÊN ĐƯỜNG DẪN PLACEHOLDER
+var danhSachNhaThauMacDinh = ["An ninh", "Vệ sinh", "Cây xanh", "Côn trùng"];
+
+function formatDinhDangChuoiSo(val, targetLength) {
+  if (val === undefined || val === null || val === 'Chưa cập nhật') return 'Chưa cập nhật';
+  var cleanStr = val.toString().trim();
+  if (cleanStr === '') return '';
+  
+  if (/^\d+$/.test(cleanStr) && cleanStr.length < targetLength) {
+    return cleanStr.padStart(targetLength, '0');
+  }
+  return cleanStr;
+}
+
 window.addEventListener('error', function(e) {
   if (e.target && e.target.tagName === 'IMG') {
-    if(e.target.src !== 'https://lh3.googleusercontent.com/d/1GBqXdt2b_VPgjhyH0frq-YnGF9aMOa8e') {
-       e.target.src = 'https://lh3.googleusercontent.com/d/1GBqXdt2b_VPgjhyH0frq-YnGF9aMOa8e';
-    }
+    e.target.src = 'https://via.placeholder.com/150';
   }
 }, true);
 
 document.addEventListener('DOMContentLoaded', function() {
-  if (typeof google === 'undefined') {
-    document.getElementById('listDuAn').innerHTML = `
-      <div class="alert alert-danger mx-auto mt-4 text-start" style="max-width: 600px;">
-        <h5>⚠️ Phát hiện sai môi trường thực thi!</h5>
-        <p>Bạn đang chạy file HTML trực tiếp trên máy tính hoặc Github Pages. Để ứng dụng kết nối được dữ liệu Google Sheet, bạn phải làm theo cách sau:</p>
-        <ol>
-          <li>Dán mã HTML này vào file <b>Index.html</b> trong trang Google Apps Script.</li>
-          <li>Chọn nút <b>Triển khai (Deploy)</b> &gt; <b>Quản lý bản triển khai (Manage deployments)</b>.</li>
-          <li>Mở ứng dụng bằng liên kết <b>Web App URL</b> do Google cấp.</li>
-        </ol>
-      </div>`;
-    return;
-  }
   loadDuAn();
 });
+
+function callAPI(action, payload) {
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8', 
+    },
+    body: JSON.stringify({
+      action: action,
+      payload: payload
+    })
+  }).then(res => res.json());
+}
 
 function loadDuAn() {
   var container = document.getElementById('listDuAn');
@@ -200,15 +233,15 @@ function loadDuAn() {
   }
   container.innerHTML = '<div class="text-center w-100 py-4">Đang tải dữ liệu dự án...</div>';
   
-  google.script.run
-    .withSuccessHandler(function(list) {
+  fetch(API_URL + "?action=getDuAn")
+    .then(res => res.json())
+    .then(list => {
       window.globalDuAnList = list || [];
       hienThiDanhSachDuAn(window.globalDuAnList);
     })
-    .withFailureHandler(function(error) {
+    .catch(error => {
       container.innerHTML = '<div class="text-center w-100 py-4 text-danger">Lỗi: ' + error.message + '</div>';
-    })
-    .getDanhSachDuAn();
+    });
 }
 
 function hienThiDanhSachDuAn(list) {
@@ -233,17 +266,6 @@ function hienThiDanhSachDuAn(list) {
   }
 }
 
-function toggleKhongThoiHan(prefix) {
-  var isChecked = document.getElementById(prefix + 'CheckKhongThoiHan').checked;
-  var inputNgay = document.getElementById(prefix + 'TinhTrang');
-  if (isChecked) {
-    inputNgay.value = '';
-    inputNgay.disabled = true;
-  } else {
-    inputNgay.disabled = false;
-  }
-}
-
 function tcClickDuAn(index) {
   var da = window.globalDuAnList[index];
   if (!da) return;
@@ -254,71 +276,91 @@ function tcClickDuAn(index) {
   addBreadcrumb(da.ten, 'tcClickDuAn(' + index + ')');
   document.getElementById('tenDuAnHienTai').innerText = da.ten;
   
-  var containerNs = document.getElementById('listNhanSu');
-  containerNs.innerHTML = '<div class="text-center w-100 py-4">Đang tải danh sách nhân sự...</div>';
+  var bigContainer = document.getElementById('listNhanSuTheoNhaThau');
+  bigContainer.innerHTML = '<div class="text-center w-100 py-4">Đang tải danh sách nhân sự theo nhà thầu...</div>';
   switchScreen('manHinhNhanSu');
 
-  google.script.run
-    .withSuccessHandler(function(nhanSuList) {
+  fetch(API_URL + "?action=getNhanSu&idDuAn=" + encodeURIComponent(da.id))
+    .then(res => res.json())
+    .then(nhanSuList => {
       window.globalNhanSuList = nhanSuList || [];
-      containerNs.innerHTML = '';
+      bigContainer.innerHTML = '';
+      
       if (window.globalNhanSuList.length === 0) {
-        containerNs.innerHTML = '<div class="text-center w-100 py-4 text-muted">Chưa có nhân sự trong dự án này.</div>';
+        bigContainer.innerHTML = '<div class="text-center w-100 py-4 text-muted">Chưa có nhân sự trong dự án này.</div>';
         return;
       }
       
-      for (var i = 0; i < window.globalNhanSuList.length; i++) {
-        var ns = window.globalNhanSuList[i];
-        var badgeTinhTrang = '';
-        var chuoiTinhTrang = ns.tinhTrang ? ns.tinhTrang.trim() : '';
+      danhSachNhaThauMacDinh.forEach(function(tenNhaThau) {
+        var nsThuocNhaThau = window.globalNhanSuList.filter(function(item) {
+          return item.nhaThau && item.nhaThau.toString().trim().toLowerCase() === tenNhaThau.toLowerCase();
+        });
         
-        if (chuoiTinhTrang === 'Không thời hạn') {
-          badgeTinhTrang = '<span class="badge bg-info text-dark">HĐ Không thời hạn</span>';
-        } else if (chuoiTinhTrang === '' || chuoiTinhTrang === 'Chưa cập nhật') {
-          badgeTinhTrang = '<span class="badge bg-secondary">Chưa cập nhật hợp đồng</span>';
+        var groupHtml = '';
+        groupHtml += '<div class="nha-thau-section mb-4">';
+        groupHtml += '  <div class="nha-thau-header d-flex justify-content-between align-items-center">';
+        groupHtml += '    <span>🏢 Nhà thầu: ' + tenNhaThau + '</span>';
+        groupHtml += '    <span class="badge bg-primary rounded-pill">' + nsThuocNhaThau.length + ' nhân sự</span>';
+        groupHtml += '  </div>';
+        groupHtml += '  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">';
+        
+        if (nsThuocNhaThau.length === 0) {
+          groupHtml += '    <div class="text-muted small ps-3 py-2 italic">Chưa có nhân sự thuộc nhóm nhà thầu này.</div>';
         } else {
-          var homNay = new Date();
-          homNay.setHours(0,0,0,0);
-          var parts = chuoiTinhTrang.split('-');
-          var ngayHetHan = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(chuoiTinhTrang);
-          
-          if (isNaN(ngayHetHan.getTime())) {
-            badgeTinhTrang = '<span class="badge bg-light text-dark border">' + chuoiTinhTrang + '</span>';
-          } else {
-            ngayHetHan.setHours(0,0,0,0);
-            var diffTime = ngayHetHan - homNay;
-            var soNgayConLai = Math.round(diffTime / 86400000);
-            if (soNgayConLai < 0) {
-              badgeTinhTrang = '<span class="badge bg-danger">Đã hết hạn HD</span>';
-            } else if (soNgayConLai <= 30) {
-              badgeTinhTrang = '<span class="badge bg-warning text-dark">Sắp hết hạn (' + soNgayConLai + ' ngày)</span>';
+          nsThuocNhaThau.forEach(function(ns) {
+            var originalIndex = window.globalNhanSuList.findIndex(function(x) { return x.id === ns.id; });
+            
+            var badgeTinhTrang = '';
+            if (!ns.tinhTrang || ns.tinhTrang.trim() === '' || ns.tinhTrang === 'Chưa cập nhật') {
+              badgeTinhTrang = '<span class="badge bg-secondary">Chưa cập nhật HD</span>';
+            } else if (ns.tinhTrang.toString().trim() === 'Vô thời hạn') {
+              badgeTinhTrang = '<span class="badge bg-success">HĐ Vô thời hạn</span>';
             } else {
-              badgeTinhTrang = '<span class="badge bg-success">Còn hạn HD</span>';
+              var homNay = new Date();
+              homNay.setHours(0,0,0,0);
+              var parts = ns.tinhTrang.split('-');
+              var ngayHetHan = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(ns.tinhTrang);
+              
+              if (isNaN(ngayHetHan.getTime())) {
+                badgeTinhTrang = '<span class="badge bg-info">' + ns.tinhTrang + '</span>';
+              } else {
+                ngayHetHan.setHours(0,0,0,0);
+                var diffTime = ngayHetHan - homNay;
+                var soNgayConLai = Math.round(diffTime / 86400000);
+                if (soNgayConLai < 0) {
+                  badgeTinhTrang = '<span class="badge bg-danger">Đã hết hạn HD</span>';
+                } else if (soNgayConLai <= 30) {
+                  badgeTinhTrang = '<span class="badge bg-warning text-dark">Sắp hết hạn (' + soNgayConLai + ' ngày)</span>';
+                } else {
+                  badgeTinhTrang = '<span class="badge bg-success">Còn hạn HD</span>';
+                }
+              }
             }
-          }
-        }
 
-        var cardHtml = '';
-        cardHtml += '<div class="col">';
-        cardHtml += '  <div class="staff-card p-3 border d-flex align-items-center justify-content-between">';
-        cardHtml += '    <div class="d-flex align-items-center gap-2">';
-        cardHtml += '      <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="avatar-staff">';
-        cardHtml += '      <div>';
-        cardHtml += '        <div class="fw-bold text-dark text-wrap" style="max-width:140px;">' + ns.ten + '</div>';
-        cardHtml += '        <div class="small text-muted mb-1">' + ns.viTri + '</div>';
-        cardHtml += '        <div>' + badgeTinhTrang + '</div>';
-        cardHtml += '      </div>';
-        cardHtml += '    </div>';
-        cardHtml += '    <button class="btn btn-sm btn-primary align-self-center px-2 ms-1" onclick="tcClickNhanVien(' + i + ')">Xem</button>';
-        cardHtml += '  </div>';
-        cardHtml += '</div>';
-        containerNs.innerHTML += cardHtml;
-      }
+            groupHtml += '<div class="col">';
+            groupHtml += '  <div class="staff-card p-3 border d-flex align-items-center justify-content-between">';
+            groupHtml += '    <div class="d-flex align-items-center gap-2">';
+            groupHtml += '      <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="avatar-staff">';
+            groupHtml += '      <div>';
+            groupHtml += '        <div class="fw-bold text-dark text-wrap" style="max-width:140px;">' + ns.ten + '</div>';
+            groupHtml += '        <div class="small text-muted mb-1">' + ns.viTri + '</div>';
+            groupHtml += '        <div>' + badgeTinhTrang + '</div>';
+            groupHtml += '      </div>';
+            groupHtml += '    </div>';
+            groupHtml += '    <button type="button" class="btn btn-sm btn-primary align-self-center px-2 ms-1" onclick="tcClickNhanVien(' + originalIndex + ')">Xem</button>';
+            groupHtml += '  </div>';
+            groupHtml += '</div>';
+          });
+        }
+        
+        groupHtml += '  </div>';
+        groupHtml += '</div>';
+        bigContainer.innerHTML += groupHtml;
+      });
     })
-    .withFailureHandler(function(error) {
-      containerNs.innerHTML = '<div class="text-center w-100 py-4 text-danger">Lỗi dữ liệu: ' + error.message + '</div>';
-    })
-    .getNhanSuTheoDuAn(currentDuAnId);
+    .catch(error => {
+      bigContainer.innerHTML = '<div class="text-center w-100 py-4 text-danger">Lỗi dữ liệu: ' + error.message + '</div>';
+    });
 }
 
 function tcClickNhanVien(index) {
@@ -333,15 +375,11 @@ function tcClickNhanVien(index) {
   document.getElementById('ctAnh').src = chuyenDoiLinkAnh(ns.anh);
   document.getElementById('ctTen').innerText = ns.ten;
   document.getElementById('ctViTri').innerText = ns.viTri;
+  document.getElementById('ctNhaThauBadge').innerText = "Nhà thầu: " + (ns.nhaThau || 'Chưa chọn');
   
-  var txtTinhTrang = ns.tinhTrang || 'Chưa cập nhật';
-  if(txtTinhTrang !== 'Không thời hạn' && txtTinhTrang.split('-').length === 3) {
-     var p = txtTinhTrang.split('-');
-     txtTinhTrang = p[2] + '/' + p[1] + '/' + p[0];
-  }
-  document.getElementById('ctTinhTrang').innerText = txtTinhTrang;
+  document.getElementById('ctSdt').innerText = formatDinhDangChuoiSo(ns.sdt, 10); 
   document.getElementById('ctNgaySinh').innerText = ns.ngaySinh || 'Chưa cập nhật';
-  document.getElementById('ctCccd').innerText = ns.cccd || '';
+  document.getElementById('ctCccd').innerText = formatDinhDangChuoiSo(ns.cccd, 12);
   document.getElementById('ctThuongTru').innerText = ns.thuongTru || '';
   document.getElementById('ctTamTru').innerText = ns.tamTru || '';
 
@@ -350,8 +388,7 @@ function tcClickNhanVien(index) {
     { key: 'lltp', label: 'Lý lịch tư pháp' },
     { key: 'cccdScan', label: 'CCCD (Scan)' },
     { key: 'gksk', label: 'Giấy khám sức khỏe' },
-    { key: 'chungChi', label: 'Chứng chỉ' },
-    { key: 'camKet', label: 'Cam kết' }
+    { key: 'chungChi', label: 'Chứng chỉ' }
   ];
 
   var containerHoSo = document.getElementById('listHoSo');
@@ -360,173 +397,133 @@ function tcClickNhanVien(index) {
   for (var i = 0; i < loaiHoSo.length; i++) {
     var item = loaiHoSo[i];
     var linkFile = ns.hoSo ? ns.hoSo[item.key] : null;
-    var fileStatusHtml = linkFile 
-      ? '<a href="' + linkFile + '" target="_blank" class="btn btn-sm btn-success w-100 mb-1">Xem bản quét</a>' 
-      : '<span class="text-danger small d-block mb-1 fw-medium">Chưa nộp file scan</span>';
+    var fileStatusHtml = (linkFile && linkFile.trim() !== '') 
+      ? '<a href="' + linkFile + '" target="_blank" class="btn btn-sm btn-success w-100 mb-1">👁️ Xem bản quét</a>' 
+      : '<span class="text-danger small d-block mb-1 fw-medium">❌ Chưa nộp file scan</span>';
 
     var hsHtml = '';
     hsHtml += '<div class="p-2 border rounded bg-light">';
     hsHtml += '  <div class="d-flex justify-content-between align-items-start d-flex-mobile-column gap-1">';
     hsHtml += '    <span class="fw-semibold text-dark small" style="min-width:120px;">' + item.label + '</span>';
     hsHtml += '    <div class="w-100 text-md-end" style="max-width: 320px;">';
-    hsHtml += '      ' + fileStatusHtml;
+    hsHtml += '      <div id="wrapper_link_' + item.key + '">' + fileStatusHtml + '</div>';
     hsHtml += '      <div class="d-flex gap-1">';
     hsHtml += '        <input type="file" id="file_' + item.key + '" class="form-control form-control-sm" accept="image/*,.pdf">';
-    hsHtml += '        <button class="btn btn-sm btn-primary px-2" onclick="handleUploadByIndex(' + i + ')">Tải_lên</button>';
+    hsHtml += '        <button type="button" class="btn btn-sm btn-primary px-2" onclick="handleUploadByIndex(' + i + ')">Tải_lên</button>';
     hsHtml += '      </div>';
     hsHtml += '    </div>';
     hsHtml += '  </div>';
-    hsHtml += '  <div id="status_' + item.key + '" class="small text-muted" style="font-size:11px;"></div>';
+    hsHtml += '  <div id="status_' + item.key + '" class="small text-muted mt-1" style="font-size:11px;"></div>';
     hsHtml += '</div>';
     containerHoSo.innerHTML += hsHtml;
   }
 }
 
-function moManHinhCapNhat() {
-  var ns = window.globalNhanSuList[currentStaffIndex];
-  if (!ns) return;
-  
-  document.getElementById('editFileAnhInput').value = '';
-  document.getElementById('editTen').value = ns.ten || '';
-  document.getElementById('editViTri').value = ns.viTri || '';
-  document.getElementById('editCccd').value = ns.cccd || '';
-  document.getElementById('editThuongTru').value = ns.thuongTru || '';
-  document.getElementById('editTamTru').value = ns.tamTru || '';
-  
-  var dinhDangNgay = function(chuoiNgay) {
-    if (!chuoiNgay) return '';
-    var d = new Date(chuoiNgay);
-    if (isNaN(d.getTime())) {
-      var parts = chuoiNgay.split('-');
-      if (parts.length === 3) return chuoiNgay;
-      return '';
-    }
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  };
-  
-  var chuoiTinhTrang = ns.tinhTrang ? ns.tinhTrang.trim() : '';
-  if (chuoiTinhTrang === 'Không thời hạn') {
-    document.getElementById('editCheckKhongThoiHan').checked = true;
-    document.getElementById('editTinhTrang').value = '';
-    document.getElementById('editTinhTrang').disabled = true;
-  } else {
-    document.getElementById('editCheckKhongThoiHan').checked = false;
-    document.getElementById('editTinhTrang').disabled = false;
-    document.getElementById('editTinhTrang').value = dinhDangNgay(chuoiTinhTrang);
-  }
-  
-  if(ns.ngaySinh && ns.ngaySinh.indexOf('/') !== -1) {
-    var pNgay = ns.ngaySinh.split('/');
-    document.getElementById('editNgaySinh').value = pNgay[2] + '-' + pNgay[1] + '-' + pNgay[0];
-  } else {
-    document.getElementById('editNgaySinh').value = dinhDangNgay(ns.ngaySinh);
-  }
-  
-  switchScreen('manHinhCapNhatNhanSu');
-}
-
-function xuLyLuuCapNhatFull() {
-  var btn = document.getElementById('btnLuuCapNhat');
-  var fileInput = document.getElementById('editFileAnhInput');
-  var file = fileInput.files[0];
-  
-  var valTinhTrang = '';
-  if (document.getElementById('editCheckKhongThoiHan').checked) {
-    valTinhTrang = 'Không thời hạn';
-  } else {
-    valTinhTrang = document.getElementById('editTinhTrang').value;
-  }
-
-  var data = {
-    idNhanSu: currentStaffId,
-    ten: document.getElementById('editTen').value,
-    viTri: document.getElementById('editViTri').value,
-    tinhTrang: valTinhTrang,
-    ngaySinh: document.getElementById('editNgaySinh').value,
-    cccd: document.getElementById('editCccd').value,
-    thuongTru: document.getElementById('editThuongTru').value,
-    tamTru: document.getElementById('editTamTru').value,
-    fileData: null,
-    fileName: file ? file.name : ''
-  };
-
-  if (!data.ten) { alert('Vui lòng điền Họ và tên nhân viên!'); return; }
-  
-  btn.disabled = true;
-  btn.innerText = "Đang lưu thay đổi...";
-
-  if (file) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      data.fileData = e.target.result;
-      thucHienGuiCapNhat(data);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    thucHienGuiCapNhat(data);
-  }
-}
-
-function thucHienGuiCapNhat(data) {
-  var btn = document.getElementById('btnLuuCapNhat');
-  google.script.run.withSuccessHandler(function(res) {
-    btn.disabled = false;
-    btn.innerText = "Lưu Thay Đổi";
-    if (res.success) {
-      alert('Cập nhật thông tin thành công!');
-      window.globalNhanSuList = [];
-      if (currentDuAnIndex !== -1) {
-        tcClickDuAn(currentDuAnIndex);
-      } else {
-        showManHinhDuAn();
-      }
-    } else {
-      alert('Lỗi: ' + res.error);
-    }
-  })
-  .withFailureHandler(function(err){
-     btn.disabled = false;
-     btn.innerText = "Lưu Thay Đổi";
-     alert("Lỗi kết nối: " + err.message);
-  })
-  .capNhatThongTinNhanSu(data);
-}
-
-function quayLaiChiTietTuSua() {
-  switchScreen('manHinhChiTiet');
-}
-
 function handleUploadByIndex(i) {
   var loaiHoSo = [
-    { key: 'syll', column: 'SyLL' },
-    { key: 'lltp', column: 'LLTP' },
-    { key: 'cccdScan', column: 'ScanCCCD' },
-    { key: 'gksk', column: 'GKSK' },
-    { key: 'chungChi', column: 'ChungChi' },
-    { key: 'camKet', column: 'CamKet' }
+    { key: 'syll', column: 'Sơ yếu lý lịch' },
+    { key: 'lltp', column: 'Lý lịch tư pháp' },
+    { key: 'cccdScan', column: 'CCCD (Scan)' },
+    { key: 'gksk', column: 'Giấy khám sức khỏe' },
+    { key: 'chungChi', column: 'Chứng chỉ' }
   ];
-  var item = loaiHoSo[i];
-  if (item) {
-    handleUpload(item.key, item.column);
+  if (loaiHoSo[i]) {
+    handleUpload(loaiHoSo[i].key, loaiHoSo[i].column);
+  }
+}
+
+function handleUpload(key, columnName) {
+  var fileInput = document.getElementById('file_' + key);
+  var statusDiv = document.getElementById('status_' + key);
+  
+  if (!fileInput || fileInput.files.length === 0) {
+    alert('Vui lòng chọn file trước khi bấm Upload!');
+    return;
+  }
+
+  var file = fileInput.files[0];
+  var reader = new FileReader();
+  statusDiv.innerHTML = '<span class="text-warning fw-medium">⏳ Đang tải lên...</span>';
+
+  reader.onload = function(e) {
+    var fileData = e.target.result;
+    
+    var payload = {
+      idNhanVien: currentStaffId,
+      columnName: columnName,
+      fileData: fileData,
+      fileName: file.name
+    };
+
+    callAPI('uploadFile', payload)
+      .then(res => {
+        if(res.success) {
+          alert("Upload thành công!");
+          statusDiv.innerHTML = '<span class="text-success fw-bold">✅ Đã lưu liên kết!</span>';
+          
+          var wrapperLink = document.getElementById('wrapper_link_' + key);
+          if (wrapperLink) {
+            wrapperLink.innerHTML = '<a href="' + res.url + '" target="_blank" class="btn btn-sm btn-success w-100 mb-1">👁️ Xem bản quét</a>';
+          }
+          fileInput.value = "";
+
+          if (window.globalNhanSuList && window.globalNhanSuList[currentStaffIndex]) {
+            if (!window.globalNhanSuList[currentStaffIndex].hoSo) {
+              window.globalNhanSuList[currentStaffIndex].hoSo = {};
+            }
+            window.globalNhanSuList[currentStaffIndex].hoSo[key] = res.url;
+          }
+        } else {
+          statusDiv.innerHTML = '<span class="text-danger fw-medium">❌ Lỗi: ' + res.error + '</span>';
+          alert('Lỗi máy chủ: ' + res.error);
+        }
+      })
+      .catch(err => {
+        statusDiv.innerHTML = '<span class="text-danger fw-medium">❌ Lỗi kết nối mạng</span>';
+        alert('Lỗi kết nối mạng: ' + err.message);
+      });
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleVoThoiHan(prefix) {
+  var isChecked = document.getElementById(prefix + 'VoThoiHan').checked;
+  var dateInput = document.getElementById(prefix + 'TinhTrang');
+  if (isChecked) {
+    dateInput.value = '';
+    dateInput.disabled = true;
+  } else {
+    dateInput.disabled = false;
   }
 }
 
 function moManHinhThemNhanSu() {
   switchScreen('manHinhThemNhanSu');
-  document.getElementById('addCheckKhongThoiHan').checked = false;
+  
+  document.getElementById('addVoThoiHan').checked = false;
   document.getElementById('addTinhTrang').disabled = false;
   document.getElementById('addTinhTrang').value = '';
-  
+  document.getElementById('addTen').value = '';
+  document.getElementById('addSdt').value = '';
+  document.getElementById('addViTri').value = '';
+  document.getElementById('addNgaySinh').value = '';
+  document.getElementById('addCccd').value = '';
+  document.getElementById('addThuongTru').value = '';
+  document.getElementById('addTamTru').value = '';
+  document.getElementById('fileAnhInput').value = '';
+
   var select = document.getElementById('selectDuAn');
   select.innerHTML = '<option value="">-- Đang tải dự án --</option>';
   
-  google.script.run.withSuccessHandler(function(list) {
-    select.innerHTML = '<option value="">-- Chọn dự án --</option>';
-    for (var i = 0; i < list.length; i++) {
-      var da = list[i];
-      select.innerHTML += '<option value="' + da.id + '">' + da.ten + '</option>';
-    }
-  }).getDanhSachDuAn();
+  fetch(API_URL + "?action=getDuAn")
+    .then(res => res.json())
+    .then(list => {
+      select.innerHTML = '<option value="">-- Chọn dự án --</option>';
+      for (var i = 0; i < list.length; i++) {
+        var da = list[i];
+        select.innerHTML += '<option value="' + da.id + '">' + da.ten + '</option>';
+      }
+    });
 }
 
 function xuLyLuuNhanSuFull() {
@@ -534,20 +531,21 @@ function xuLyLuuNhanSuFull() {
   var fileInput = document.getElementById('fileAnhInput');
   var file = fileInput.files[0];
   
-  var valTinhTrang = '';
-  if (document.getElementById('addCheckKhongThoiHan').checked) {
-    valTinhTrang = 'Không thời hạn';
-  } else {
-    valTinhTrang = document.getElementById('addTinhTrang').value;
-  }
+  var rawSdt = document.getElementById('addSdt').value.trim();
+  var rawCccd = document.getElementById('addCccd').value.trim();
+  
+  var isVoThoiHan = document.getElementById('addVoThoiHan').checked;
+  var tinhTrangValue = isVoThoiHan ? 'Vô thời hạn' : document.getElementById('addTinhTrang').value;
 
   var data = {
     idDuAn: document.getElementById('selectDuAn').value,
+    nhaThau: document.getElementById('addNhaThau').value,
     ten: document.getElementById('addTen').value,
+    sdt: rawSdt !== "" ? "'" + rawSdt : "", 
     viTri: document.getElementById('addViTri').value,
-    tinhTrang: valTinhTrang,
+    tinhTrang: tinhTrangValue,
     ngaySinh: document.getElementById('addNgaySinh').value,
-    cccd: document.getElementById('addCccd').value,
+    cccd: rawCccd !== "" ? "'" + rawCccd : "",
     thuongTru: document.getElementById('addThuongTru').value,
     tamTru: document.getElementById('addTamTru').value,
     fileData: null,
@@ -557,7 +555,7 @@ function xuLyLuuNhanSuFull() {
   if(!data.idDuAn || !data.ten) { alert('Thiếu thông tin dự án hoặc tên!'); return; }
 
   btn.disabled = true;
-  btn.innerText = "Đang xử lý lưu...";
+  btn.innerText = "Đang lưu...";
 
   if (file) {
     var reader = new FileReader();
@@ -573,49 +571,131 @@ function xuLyLuuNhanSuFull() {
 
 function thucHienGuiData(data) {
   var btn = document.getElementById('btnLuuNhanSu');
-  google.script.run.withSuccessHandler(function(res) {
-    btn.disabled = false;
-    btn.innerText = "Lưu thông tin";
-    if(res.success) {
-      alert('Thêm nhân viên thành công!');
-      showManHinhDuAn();
-    } else {
-      alert('Lỗi: ' + res.error);
-    }
-  })
-  .withFailureHandler(function(err){
-     btn.disabled = false;
-     btn.innerText = "Lưu thông tin";
-     alert("Lỗi mạng: " + err.message);
-  })
-  .themNhanSuMoiVoiAnh(data);
-}
-
-function handleUpload(key, columnName) {
-  var fileInput = document.getElementById('file_' + key);
-  var statusDiv = document.getElementById('status_' + key);
-  if (!fileInput || fileInput.files.length === 0) {
-    alert('Vui lòng chọn file trước khi bấm Upload!');
-    return;
-  }
-
-  var file = fileInput.files[0];
-  var reader = new FileReader();
-  statusDiv.innerHTML = 'Đang tải lên dữ liệu...';
-
-  reader.onload = function(e) {
-    var fileData = e.target.result;
-    google.script.run.withSuccessHandler(function(res) {
+  
+  callAPI('themNhanSu', data)
+    .then(res => {
+      btn.disabled = false;
+      btn.innerText = "Lưu thông tin";
       if(res.success) {
-        statusDiv.innerHTML = 'Tải lên thành công!';
-        alert('Upload thành công!');
+        alert('Thêm nhân viên thành công!');
         showManHinhDuAn();
       } else {
-        statusDiv.innerHTML = 'Lỗi: ' + res.error;
+        alert('Lỗi: ' + res.error);
       }
-    }).uploadFileAndLink(currentStaffId, columnName, fileData, file.name);
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerText = "Lưu thông tin";
+      alert('Lỗi kết nối mạng: ' + err.message);
+    });
+}
+
+function moManHinhCapNhat() {
+  var ns = window.globalNhanSuList[currentStaffIndex];
+  if (!ns) return;
+  
+  document.getElementById('editFileAnhInput').value = '';
+  document.getElementById('editTen').value = ns.ten || '';
+  document.getElementById('editSdt').value = formatDinhDangChuoiSo(ns.sdt, 10); 
+  document.getElementById('editViTri').value = ns.viTri || '';
+  document.getElementById('editCccd').value = formatDinhDangChuoiSo(ns.cccd, 12);
+  document.getElementById('editThuongTru').value = ns.thuongTru || '';
+  document.getElementById('editTamTru').value = ns.tamTru || '';
+  document.getElementById('editNhaThau').value = ns.nhaThau || 'An ninh';
+  
+  var dinhDangNgay = function(chuoiNgay) {
+    if (!chuoiNgay) return '';
+    var d = new Date(chuoiNgay);
+    if (isNaN(d.getTime())) {
+      var parts = chuoiNgay.split('-');
+      if (parts.length === 3) return chuoiNgay;
+      return '';
+    }
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   };
-  reader.readAsDataURL(file);
+  
+  if (ns.tinhTrang && ns.tinhTrang.toString().trim() === 'Vô thời hạn') {
+    document.getElementById('editVoThoiHan').checked = true;
+    document.getElementById('editTinhTrang').value = '';
+    document.getElementById('editTinhTrang').disabled = true;
+  } else {
+    document.getElementById('editVoThoiHan').checked = false;
+    document.getElementById('editTinhTrang').disabled = false;
+    document.getElementById('editTinhTrang').value = dinhDangNgay(ns.tinhTrang);
+  }
+  
+  document.getElementById('editNgaySinh').value = dinhDangNgay(ns.ngaySinh);
+  
+  switchScreen('manHinhCapNhatNhanSu');
+}
+
+function xuLyLuuCapNhatFull() {
+  var btn = document.getElementById('btnLuuCapNhat');
+  var fileInput = document.getElementById('editFileAnhInput');
+  var file = fileInput.files[0];
+  
+  var rawSdt = document.getElementById('editSdt').value.trim();
+  var rawCccd = document.getElementById('editCccd').value.trim();
+
+  var isVoThoiHan = document.getElementById('editVoThoiHan').checked;
+  var tinhTrangValue = isVoThoiHan ? 'Vô thời hạn' : document.getElementById('editTinhTrang').value;
+
+  var data = {
+    idNhanSu: currentStaffId,
+    ten: document.getElementById('editTen').value,
+    sdt: rawSdt !== "" ? "'" + rawSdt : "", 
+    viTri: document.getElementById('editViTri').value,
+    tinhTrang: tinhTrangValue,
+    ngaySinh: document.getElementById('editNgaySinh').value,
+    cccd: rawCccd !== "" ? "'" + rawCccd : "",
+    thuongTru: document.getElementById('editThuongTru').value,
+    tamTru: document.getElementById('editTamTru').value,
+    nhaThau: document.getElementById('editNhaThau').value,
+    fileData: null,
+    fileName: file ? file.name : ''
+  };
+
+  if (!data.ten) { alert('Vui lòng điền Họ và tên nhân viên!'); return; }
+
+  btn.disabled = true;
+  btn.innerText = "Đang cập nhật...";
+
+  if (file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      data.fileData = e.target.result;
+      thucHienGuiCapNhat(data);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    thucHienGuiCapNhat(data);
+  }
+}
+
+function thucHienGuiCapNhat(data) {
+  var btn = document.getElementById('btnLuuCapNhat');
+  
+  callAPI('capNhatNhanSu', data)
+    .then(res => {
+      btn.disabled = false;
+      btn.innerText = "Lưu Thay Đổi";
+      if (res.success) {
+        alert('Cập nhật thông tin thành công!');
+        window.globalNhanSuList = [];
+        if (currentDuAnIndex !== -1) {
+          tcClickDuAn(currentDuAnIndex);
+        } else {
+          showManHinhDuAn();
+        }
+      } else {
+        alert('Lỗi: ' + res.error);
+      }
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerText = "Lưu Thay Đổi";
+      alert('Lỗi kết nối mạng: ' + err.message);
+    });
 }
 
 function switchScreen(screenId) {
@@ -630,7 +710,7 @@ function switchScreen(screenId) {
 function showManHinhDuAn() {
   resetBreadcrumb();
   switchScreen('manHinhDuAn');
-  if (typeof google !== 'undefined') loadDuAn();
+  loadDuAn();
 }
 
 function quayLaiNhanSu() {
@@ -639,6 +719,10 @@ function quayLaiNhanSu() {
   } else {
     showManHinhDuAn();
   }
+}
+
+function quayLaiChiTietTuSua() {
+  switchScreen('manHinhChiTiet');
 }
 
 function resetBreadcrumb() {
@@ -658,14 +742,8 @@ function addBreadcrumb(text, actionHtml) {
 }
 
 function chuyenDoiLinkAnh(url) {
-  if (!url || typeof url !== 'string' || url.trim() === '') {
-    return 'https://lh3.googleusercontent.com/d/1GBqXdt2b_VPgjhyH0frq-YnGF9aMOa8e';
-  }
+  if (!url || typeof url !== 'string' || url.trim() === '') return 'https://via.placeholder.com/150';
   if (url.indexOf('googleusercontent.com') !== -1 || url.indexOf('thumbnail?id=') !== -1) return url;
-  if (url.indexOf('uc?export=view&id=') !== -1) {
-    var id = url.split('id=')[1];
-    return 'https:' + String.fromCharCode(47) + String.fromCharCode(47) + 'drive.google.com' + String.fromCharCode(47) + 'thumbnail?id=' + id + '&sz=w1000';
-  }
   
   var slash = String.fromCharCode(47);
   var splitKey = slash + 'file' + slash + 'd' + slash;
@@ -673,7 +751,7 @@ function chuyenDoiLinkAnh(url) {
     var parts = url.split(splitKey);
     if (parts.length > 1) {
       var id2 = parts[1].split(slash)[0];
-      return 'https:' + slash + slash + 'drive.google.com' + slash + 'thumbnail?id=' + id2 + '&sz=w1000';
+      return 'https://drive.google.com/thumbnail?id=' + id2 + '&sz=w1000';
     }
   }
   return url;
