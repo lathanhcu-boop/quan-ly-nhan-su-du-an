@@ -138,7 +138,7 @@
           <p id="ctViTri" class="badge bg-primary px-3 py-2 mb-3 text-wrap"></p>
           <hr class="my-2 text-muted">
           <div class="text-start bg-light p-2 rounded small">
-            <p class="mb-1"><strong>Hạn hợp đồng:</strong> <span id="ctTinhTrang" class="fw-bold"></span></p> 
+            <p class="mb-1"><strong>Hạn hợp đồng:</strong> <span id="ctTinhTrang" class="fw-bold text-success"></span></p>
             <p class="mb-1"><strong>Ngày sinh:</strong> <span id="ctNgaySinh"></span></p> 
             <p class="mb-1"><strong>CCCD:</strong> <span id="ctCccd"></span></p>
             <p class="mb-1"><strong>Thường trú:</strong> <span id="ctThuongTru"></span></p>
@@ -166,7 +166,7 @@ var currentStaffIndex = -1;
 window.globalDuAnList = [];
 window.globalNhanSuList = [];
 
-// KHẮC PHỤC LỖI VÒNG LẶP TREO MÀN HÌNH DO LỖI ẢNH PLACEHOLDER
+// SỬA TRIỆT ĐỂ LỖI VÒNG LẶP CHẶN MẠNG TRÊN ĐƯỜNG DẪN PLACEHOLDER
 window.addEventListener('error', function(e) {
   if (e.target && e.target.tagName === 'IMG') {
     if(e.target.src !== 'https://lh3.googleusercontent.com/d/1GBqXdt2b_VPgjhyH0frq-YnGF9aMOa8e') {
@@ -176,6 +176,19 @@ window.addEventListener('error', function(e) {
 }, true);
 
 document.addEventListener('DOMContentLoaded', function() {
+  if (typeof google === 'undefined') {
+    document.getElementById('listDuAn').innerHTML = `
+      <div class="alert alert-danger mx-auto mt-4 text-start" style="max-width: 600px;">
+        <h5>⚠️ Phát hiện sai môi trường thực thi!</h5>
+        <p>Bạn đang chạy file HTML trực tiếp trên máy tính hoặc Github Pages. Để ứng dụng kết nối được dữ liệu Google Sheet, bạn phải làm theo cách sau:</p>
+        <ol>
+          <li>Dán mã HTML này vào file <b>Index.html</b> trong trang Google Apps Script.</li>
+          <li>Chọn nút <b>Triển khai (Deploy)</b> &gt; <b>Quản lý bản triển khai (Manage deployments)</b>.</li>
+          <li>Mở ứng dụng bằng liên kết <b>Web App URL</b> do Google cấp.</li>
+        </ol>
+      </div>`;
+    return;
+  }
   loadDuAn();
 });
 
@@ -220,7 +233,6 @@ function hienThiDanhSachDuAn(list) {
   }
 }
 
-// Hàm điều khiển bật tắt ô ngày khi tick chọn Không thời hạn
 function toggleKhongThoiHan(prefix) {
   var isChecked = document.getElementById(prefix + 'CheckKhongThoiHan').checked;
   var inputNgay = document.getElementById(prefix + 'TinhTrang');
@@ -306,7 +318,7 @@ function tcClickDuAn(index) {
     .withFailureHandler(function(error) {
       containerNs.innerHTML = '<div class="text-center w-100 py-4 text-danger">Lỗi dữ liệu: ' + error.message + '</div>';
     })
-    .getNhanSuTheoDuAn(da.id);
+    .getNhanSuTheoDuAn(currentDuAnId);
 }
 
 function tcClickNhanVien(index) {
@@ -322,11 +334,10 @@ function tcClickNhanVien(index) {
   document.getElementById('ctTen').innerText = ns.ten;
   document.getElementById('ctViTri').innerText = ns.viTri;
   
-  // Hiển thị hạn hợp đồng tại màn chi tiết
   var txtTinhTrang = ns.tinhTrang || 'Chưa cập nhật';
   if(txtTinhTrang !== 'Không thời hạn' && txtTinhTrang.split('-').length === 3) {
      var p = txtTinhTrang.split('-');
-     txtTinhTrang = p[2] + '/' + p[1] + '/' + p[0]; // Format dd/mm/yyyy hiển thị cho đẹp
+     txtTinhTrang = p[2] + '/' + p[1] + '/' + p[0];
   }
   document.getElementById('ctTinhTrang').innerText = txtTinhTrang;
   document.getElementById('ctNgaySinh').innerText = ns.ngaySinh || 'Chưa cập nhật';
@@ -393,7 +404,6 @@ function moManHinhCapNhat() {
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   };
   
-  // Set giá trị cho Switch Không thời hạn màn cập nhật
   var chuoiTinhTrang = ns.tinhTrang ? ns.tinhTrang.trim() : '';
   if (chuoiTinhTrang === 'Không thời hạn') {
     document.getElementById('editCheckKhongThoiHan').checked = true;
@@ -405,7 +415,6 @@ function moManHinhCapNhat() {
     document.getElementById('editTinhTrang').value = dinhDangNgay(chuoiTinhTrang);
   }
   
-  // Convert ngày sinh ngược lại cho ô input date (chuỗi gốc dạng dd/mm/yyyy cần chuyển sang yyyy-mm-dd)
   if(ns.ngaySinh && ns.ngaySinh.indexOf('/') !== -1) {
     var pNgay = ns.ngaySinh.split('/');
     document.getElementById('editNgaySinh').value = pNgay[2] + '-' + pNgay[1] + '-' + pNgay[0];
@@ -417,7 +426,7 @@ function moManHinhCapNhat() {
 }
 
 function xuLyLuuCapNhatFull() {
-  var btn = document.querySelector("#manHinhCapNhatNhanSu .btn-warning");
+  var btn = document.getElementById('btnLuuCapNhat');
   var fileInput = document.getElementById('editFileAnhInput');
   var file = fileInput.files[0];
   
@@ -459,7 +468,7 @@ function xuLyLuuCapNhatFull() {
 }
 
 function thucHienGuiCapNhat(data) {
-  var btn = document.querySelector("#manHinhCapNhatNhanSu .btn-warning");
+  var btn = document.getElementById('btnLuuCapNhat');
   google.script.run.withSuccessHandler(function(res) {
     btn.disabled = false;
     btn.innerText = "Lưu Thay Đổi";
@@ -504,8 +513,6 @@ function handleUploadByIndex(i) {
 
 function moManHinhThemNhanSu() {
   switchScreen('manHinhThemNhanSu');
-  
-  // Khởi tạo trạng thái form thêm mới
   document.getElementById('addCheckKhongThoiHan').checked = false;
   document.getElementById('addTinhTrang').disabled = false;
   document.getElementById('addTinhTrang').value = '';
@@ -623,7 +630,7 @@ function switchScreen(screenId) {
 function showManHinhDuAn() {
   resetBreadcrumb();
   switchScreen('manHinhDuAn');
-  loadDuAn();
+  if (typeof google !== 'undefined') loadDuAn();
 }
 
 function quayLaiNhanSu() {
