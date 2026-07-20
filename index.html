@@ -182,6 +182,16 @@
 // ==========================================
 const API_URL = "https://script.google.com/macros/s/AKfycbyvd_UOzxJxKKoLbIn5ypz_JX3WQlBlCGQC5nzGFO5iMVDWBxNy9dhbfXJjNzUWFOhO/exec"; 
 
+// ==========================================
+// ĐỊNH NGHĨA MẬT KHẨU RIÊNG CHO TỪNG NHÀ THẦU:
+// ==========================================
+const MAT_KHAU_NHA_THAU = {
+  "An ninh": "123",
+  "Vệ sinh": "456",
+  "Cây xanh": "789",
+  "Côn trùng": "000"
+};
+
 var currentDuAnId = '';
 var currentStaffId = '';
 var currentDuAnIndex = -1;
@@ -302,52 +312,19 @@ function tcClickDuAn(index) {
         groupHtml += '    <span>🏢 Nhà thầu: ' + tenNhaThau + '</span>';
         groupHtml += '    <span class="badge bg-primary rounded-pill">' + nsThuocNhaThau.length + ' nhân sự</span>';
         groupHtml += '  </div>';
-        groupHtml += '  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">';
+        groupHtml += '  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-2">';
         
         if (nsThuocNhaThau.length === 0) {
-          groupHtml += '    <div class="text-muted small ps-3 py-2 italic">Chưa có nhân sự thuộc nhóm nhà thầu này.</div>';
+          groupHtml += '    <div class="text-muted small ps-3 py-2 italic w-100">Chưa có nhân sự thuộc nhóm nhà thầu này.</div>';
         } else {
           nsThuocNhaThau.forEach(function(ns) {
             var originalIndex = window.globalNhanSuList.findIndex(function(x) { return x.id === ns.id; });
             
-            var badgeTinhTrang = '';
-            if (!ns.tinhTrang || ns.tinhTrang.trim() === '' || ns.tinhTrang === 'Chưa cập nhật') {
-              badgeTinhTrang = '<span class="badge bg-secondary">Chưa cập nhật HD</span>';
-            } else if (ns.tinhTrang.toString().trim() === 'Vô thời hạn') {
-              badgeTinhTrang = '<span class="badge bg-success">HĐ Vô thời hạn</span>';
-            } else {
-              var homNay = new Date();
-              homNay.setHours(0,0,0,0);
-              var parts = ns.tinhTrang.split('-');
-              var ngayHetHan = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(ns.tinhTrang);
-              
-              if (isNaN(ngayHetHan.getTime())) {
-                badgeTinhTrang = '<span class="badge bg-info">' + ns.tinhTrang + '</span>';
-              } else {
-                ngayHetHan.setHours(0,0,0,0);
-                var diffTime = ngayHetHan - homNay;
-                var soNgayConLai = Math.round(diffTime / 86400000);
-                if (soNgayConLai < 0) {
-                  badgeTinhTrang = '<span class="badge bg-danger">Đã hết hạn HD</span>';
-                } else if (soNgayConLai <= 30) {
-                  badgeTinhTrang = '<span class="badge bg-warning text-dark">Sắp hết hạn (' + soNgayConLai + ' ngày)</span>';
-                } else {
-                  badgeTinhTrang = '<span class="badge bg-success">Còn hạn HD</span>';
-                }
-              }
-            }
-
-            groupHtml += '<div class="col">';
-            groupHtml += '  <div class="staff-card p-3 border d-flex align-items-center justify-content-between">';
-            groupHtml += '    <div class="d-flex align-items-center gap-2">';
-            groupHtml += '      <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="avatar-staff">';
-            groupHtml += '      <div>';
-            groupHtml += '        <div class="fw-bold text-dark text-wrap" style="max-width:140px;">' + ns.ten + '</div>';
-            groupHtml += '        <div class="small text-muted mb-1">' + ns.viTri + '</div>';
-            groupHtml += '        <div>' + badgeTinhTrang + '</div>';
-            groupHtml += '      </div>';
-            groupHtml += '    </div>';
-            groupHtml += '    <button type="button" class="btn btn-sm btn-primary align-self-center px-2 ms-1" onclick="tcClickNhanVien(' + originalIndex + ')">Xem</button>';
+            // ĐÃ ẨN TOÀN BỘ THÔNG TIN, CHỈ HIỆN ẢNH ĐẠI DIỆN THEO YÊU CẦU
+            groupHtml += '<div class="col text-center">';
+            groupHtml += '  <div class="card p-2 h-100 border card-custom" onclick="xacThucXemNhanVien(' + originalIndex + ', \'' + tenNhaThau + '\')">';
+            groupHtml += '    <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="mx-auto rounded-circle" style="width: 75px; height: 75px; object-fit: cover; border: 2px solid #e9ecef;">';
+            groupHtml += '    <div class="mt-1"><span class="badge bg-light text-secondary border">Xem hồ sơ</span></div>';
             groupHtml += '  </div>';
             groupHtml += '</div>';
           });
@@ -361,6 +338,20 @@ function tcClickDuAn(index) {
     .catch(error => {
       bigContainer.innerHTML = '<div class="text-center w-100 py-4 text-danger">Lỗi dữ liệu: ' + error.message + '</div>';
     });
+}
+
+// HÀM MỚI: Yêu cầu mật khẩu trước khi xem
+function xacThucXemNhanVien(index, tenNhaThau) {
+  var mkDung = MAT_KHAU_NHA_THAU[tenNhaThau] || "123";
+  var nhapMK = prompt("Vui lòng nhập mật khẩu của nhà thầu [" + tenNhaThau + "] để xem chi tiết:");
+  
+  if (nhapMK === null) return; // Người dùng nhấn Hủy
+  
+  if (nhapMK === mkDung) {
+    tcClickNhanVien(index);
+  } else {
+    alert("❌ Mật khẩu không chính xác! Bạn không có quyền xem nhân sự nhà thầu này.");
+  }
 }
 
 function tcClickNhanVien(index) {
