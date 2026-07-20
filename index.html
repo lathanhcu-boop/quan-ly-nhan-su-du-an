@@ -178,14 +178,12 @@
 
 <script>
 // ==========================================
-// ⚠️ ĐIỀN ĐƯỜNG LINK WEB APP (URL TRIỂN KHAI) CỦA BẠN VÀO ĐÂY:
+// ĐƯỜNG LINK WEB APP TRIỂN KHAI CHÍNH XÁC:
 // ==========================================
 const API_URL = "https://script.google.com/macros/s/AKfycbyvd_UOzxJxKKoLbIn5ypz_JX3WQlBlCGQC5nzGFO5iMVDWBxNy9dhbfXJjNzUWFOhO/exec"; 
 
-// ==========================================
-// ĐỊNH NGHĨA MẬT KHẨU RIÊNG CHO TỪNG NHÀ THẦU:
-// ==========================================
-const MAT_KHAU_NHA_THAU = {
+// MẬT KHẨU TỪNG NHÀ THẦU
+const BRET_MAT_KHAU_CONFIG = {
   "An ninh": "123",
   "Vệ sinh": "456",
   "Cây xanh": "789",
@@ -205,7 +203,6 @@ function formatDinhDangChuoiSo(val, targetLength) {
   if (val === undefined || val === null || val === 'Chưa cập nhật') return 'Chưa cập nhật';
   var cleanStr = val.toString().trim();
   if (cleanStr === '') return '';
-  
   if (/^\d+$/.test(cleanStr) && cleanStr.length < targetLength) {
     return cleanStr.padStart(targetLength, '0');
   }
@@ -225,13 +222,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function callAPI(action, payload) {
   return fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8', 
-    },
-    body: JSON.stringify({
-      action: action,
-      payload: payload
-    })
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: action, payload: payload })
   }).then(res => res.json());
 }
 
@@ -320,11 +312,11 @@ function tcClickDuAn(index) {
           nsThuocNhaThau.forEach(function(ns) {
             var originalIndex = window.globalNhanSuList.findIndex(function(x) { return x.id === ns.id; });
             
-            // ĐÃ ẨN TOÀN BỘ THÔNG TIN, CHỈ HIỆN ẢNH ĐẠI DIỆN THEO YÊU CẦU
+            // ÉP BUỘC CHỈ IN ẢNH ĐẠI DIỆN HÌNH TRÒN, KHÔNG HIỆN THÊM BẤT KỲ CHỮ GÌ KHÁC bên dưới.
             groupHtml += '<div class="col text-center">';
-            groupHtml += '  <div class="card p-2 h-100 border card-custom" onclick="xacThucXemNhanVien(' + originalIndex + ', \'' + tenNhaThau + '\')">';
-            groupHtml += '    <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="mx-auto rounded-circle" style="width: 75px; height: 75px; object-fit: cover; border: 2px solid #e9ecef;">';
-            groupHtml += '    <div class="mt-1"><span class="badge bg-light text-secondary border">Xem hồ sơ</span></div>';
+            groupHtml += '  <div class="card p-2 h-100 border card-custom" onclick="yeuCauMatKhauNhaThau(' + originalIndex + ', \'' + tenNhaThau + '\')">';
+            groupHtml += '    <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="mx-auto rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #cbd5e1;">';
+            groupHtml += '    <div class="mt-2"><span class="badge bg-light text-dark border small" style="font-size:10px;">Xem Chi Tiết</span></div>';
             groupHtml += '  </div>';
             groupHtml += '</div>';
           });
@@ -340,21 +332,21 @@ function tcClickDuAn(index) {
     });
 }
 
-// HÀM MỚI: Yêu cầu mật khẩu trước khi xem
-function xacThucXemNhanVien(index, tenNhaThau) {
-  var mkDung = MAT_KHAU_NHA_THAU[tenNhaThau] || "123";
-  var nhapMK = prompt("Vui lòng nhập mật khẩu của nhà thầu [" + tenNhaThau + "] để xem chi tiết:");
+// ĐỔI TÊN HÀM XỬ LÝ ĐỂ TRÌNH DUYỆT BẮT BUỘC KHÔNG DÙNG CACHE CŨ
+function yeuCauMatKhauNhaThau(index, tenNhaThau) {
+  var mậtKhẩuĐúng = BRET_MAT_KHAU_CONFIG[tenNhaThau] || "123";
+  var nhapKhau = prompt("Nhập mật khẩu nhà thầu [" + tenNhaThau + "] để xem chi tiết thông tin hồ sơ:");
   
-  if (nhapMK === null) return; // Người dùng nhấn Hủy
+  if (nhapKhau === null) return; 
   
-  if (nhapMK === mkDung) {
-    tcClickNhanVien(index);
+  if (nhapKhau.trim() === mậtKhẩuĐúng) {
+    hienThiChiTietNhanVienMoi(index);
   } else {
-    alert("❌ Mật khẩu không chính xác! Bạn không có quyền xem nhân sự nhà thầu này.");
+    alert("❌ Sai mật khẩu quyền truy cập nhà thầu này!");
   }
 }
 
-function tcClickNhanVien(index) {
+function hienThiChiTietNhanVienMoi(index) {
   var ns = window.globalNhanSuList[index];
   if (!ns) return;
 
@@ -438,7 +430,6 @@ function handleUpload(key, columnName) {
 
   reader.onload = function(e) {
     var fileData = e.target.result;
-    
     var payload = {
       idNhanVien: currentStaffId,
       columnName: columnName,
@@ -451,13 +442,11 @@ function handleUpload(key, columnName) {
         if(res.success) {
           alert("Upload thành công!");
           statusDiv.innerHTML = '<span class="text-success fw-bold">✅ Đã lưu liên kết!</span>';
-          
           var wrapperLink = document.getElementById('wrapper_link_' + key);
           if (wrapperLink) {
             wrapperLink.innerHTML = '<a href="' + res.url + '" target="_blank" class="btn btn-sm btn-success w-100 mb-1">👁️ Xem bản quét</a>';
           }
           fileInput.value = "";
-
           if (window.globalNhanSuList && window.globalNhanSuList[currentStaffIndex]) {
             if (!window.globalNhanSuList[currentStaffIndex].hoSo) {
               window.globalNhanSuList[currentStaffIndex].hoSo = {};
@@ -466,12 +455,7 @@ function handleUpload(key, columnName) {
           }
         } else {
           statusDiv.innerHTML = '<span class="text-danger fw-medium">❌ Lỗi: ' + res.error + '</span>';
-          alert('Lỗi máy chủ: ' + res.error);
         }
-      })
-      .catch(err => {
-        statusDiv.innerHTML = '<span class="text-danger fw-medium">❌ Lỗi kết nối mạng</span>';
-        alert('Lỗi kết nối mạng: ' + err.message);
       });
   };
   reader.readAsDataURL(file);
@@ -490,7 +474,6 @@ function toggleVoThoiHan(prefix) {
 
 function moManHinhThemNhanSu() {
   switchScreen('manHinhThemNhanSu');
-  
   document.getElementById('addVoThoiHan').checked = false;
   document.getElementById('addTinhTrang').disabled = false;
   document.getElementById('addTinhTrang').value = '';
@@ -521,10 +504,8 @@ function xuLyLuuNhanSuFull() {
   var btn = document.getElementById('btnLuuNhanSu');
   var fileInput = document.getElementById('fileAnhInput');
   var file = fileInput.files[0];
-  
   var rawSdt = document.getElementById('addSdt').value.trim();
   var rawCccd = document.getElementById('addCccd').value.trim();
-  
   var isVoThoiHan = document.getElementById('addVoThoiHan').checked;
   var tinhTrangValue = isVoThoiHan ? 'Vô thời hạn' : document.getElementById('addTinhTrang').value;
 
@@ -544,9 +525,7 @@ function xuLyLuuNhanSuFull() {
   };
 
   if(!data.idDuAn || !data.ten) { alert('Thiếu thông tin dự án hoặc tên!'); return; }
-
   btn.disabled = true;
-  btn.innerText = "Đang lưu...";
 
   if (file) {
     var reader = new FileReader();
@@ -562,22 +541,13 @@ function xuLyLuuNhanSuFull() {
 
 function thucHienGuiData(data) {
   var btn = document.getElementById('btnLuuNhanSu');
-  
   callAPI('themNhanSu', data)
     .then(res => {
       btn.disabled = false;
-      btn.innerText = "Lưu thông tin";
       if(res.success) {
         alert('Thêm nhân viên thành công!');
         showManHinhDuAn();
-      } else {
-        alert('Lỗi: ' + res.error);
       }
-    })
-    .catch(err => {
-      btn.disabled = false;
-      btn.innerText = "Lưu thông tin";
-      alert('Lỗi kết nối mạng: ' + err.message);
     });
 }
 
@@ -614,9 +584,7 @@ function moManHinhCapNhat() {
     document.getElementById('editTinhTrang').disabled = false;
     document.getElementById('editTinhTrang').value = dinhDangNgay(ns.tinhTrang);
   }
-  
   document.getElementById('editNgaySinh').value = dinhDangNgay(ns.ngaySinh);
-  
   switchScreen('manHinhCapNhatNhanSu');
 }
 
@@ -624,10 +592,8 @@ function xuLyLuuCapNhatFull() {
   var btn = document.getElementById('btnLuuCapNhat');
   var fileInput = document.getElementById('editFileAnhInput');
   var file = fileInput.files[0];
-  
   var rawSdt = document.getElementById('editSdt').value.trim();
   var rawCccd = document.getElementById('editCccd').value.trim();
-
   var isVoThoiHan = document.getElementById('editVoThoiHan').checked;
   var tinhTrangValue = isVoThoiHan ? 'Vô thời hạn' : document.getElementById('editTinhTrang').value;
 
@@ -647,9 +613,7 @@ function xuLyLuuCapNhatFull() {
   };
 
   if (!data.ten) { alert('Vui lòng điền Họ và tên nhân viên!'); return; }
-
   btn.disabled = true;
-  btn.innerText = "Đang cập nhật...";
 
   if (file) {
     var reader = new FileReader();
@@ -665,11 +629,9 @@ function xuLyLuuCapNhatFull() {
 
 function thucHienGuiCapNhat(data) {
   var btn = document.getElementById('btnLuuCapNhat');
-  
   callAPI('capNhatNhanSu', data)
     .then(res => {
       btn.disabled = false;
-      btn.innerText = "Lưu Thay Đổi";
       if (res.success) {
         alert('Cập nhật thông tin thành công!');
         window.globalNhanSuList = [];
@@ -678,14 +640,7 @@ function thucHienGuiCapNhat(data) {
         } else {
           showManHinhDuAn();
         }
-      } else {
-        alert('Lỗi: ' + res.error);
       }
-    })
-    .catch(err => {
-      btn.disabled = false;
-      btn.innerText = "Lưu Thay Đổi";
-      alert('Lỗi kết nối mạng: ' + err.message);
     });
 }
 
@@ -735,7 +690,6 @@ function addBreadcrumb(text, actionHtml) {
 function chuyenDoiLinkAnh(url) {
   if (!url || typeof url !== 'string' || url.trim() === '') return 'https://via.placeholder.com/150';
   if (url.indexOf('googleusercontent.com') !== -1 || url.indexOf('thumbnail?id=') !== -1) return url;
-  
   var slash = String.fromCharCode(47);
   var splitKey = slash + 'file' + slash + 'd' + slash;
   if (url.indexOf(splitKey) !== -1) {
