@@ -2,18 +2,15 @@ const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
 const FOLDER_ID = '1GBqXdt2b_VPgjhyH0frq-YnGF9aMOa8e';
 
 // ==========================================
-// 1. CÁC HÀM API GIAO TIẾP VỚI GITHUB (FETCH)
+// 1. CÁC HÀM API GIAO TIẾP VỚI GITHUB/WEB (FETCH)
 // ==========================================
 
-// Hàm helper để trả về kết quả dưới dạng JSON
 function responseJson(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// Xử lý các yêu cầu lấy dữ liệu (GET)
 function doGet(e) {
-  // Nếu không có tham số truyền vào, báo lỗi hoặc có thể trả về thông báo
   if (!e || !e.parameter || !e.parameter.action) {
     return responseJson({ error: 'Vui lòng cung cấp tham số action.' });
   }
@@ -34,7 +31,6 @@ function doGet(e) {
   return responseJson({ error: 'Hành động GET không hợp lệ.' });
 }
 
-// Xử lý các yêu cầu gửi dữ liệu/upload (POST)
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
@@ -63,10 +59,9 @@ function doPost(e) {
 }
 
 // ==========================================
-// 2. CÁC HÀM XỬ LÝ LOGIC CHÍNH (GIỮ NGUYÊN)
+// 2. CÁC HÀM XỬ LÝ LOGIC CHÍNH
 // ==========================================
 
-// Hàm thêm nhân sự mới kèm ảnh đại diện (Link xem trực tuyến)
 function themNhanSuMoiVoiAnh(data) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
@@ -109,7 +104,6 @@ function themNhanSuMoiVoiAnh(data) {
   }
 }
 
-// Hàm cập nhật thông tin nhân sự
 function capNhatThongTinNhanSu(data) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
@@ -124,7 +118,6 @@ function capNhatThongTinNhanSu(data) {
     }
     
     if (targetRow === -1) return { success: false, error: 'Không tìm thấy mã nhân viên' };
-    
     sheet.getRange(targetRow, 3).setValue(data.ten);
     sheet.getRange(targetRow, 4).setValue(data.viTri);
     sheet.getRange(targetRow, 5).setValue(data.tinhTrang);
@@ -152,21 +145,18 @@ function capNhatThongTinNhanSu(data) {
   }
 }
 
-// Hàm chuẩn hóa link ảnh hiển thị trên giao diện web
 function chuyểnĐổiLinkẢnh(url) {
   if (!url || url === '') return 'https://via.placeholder.com/150';
   if (url.includes('thumbnail?id=')) return url;
   
   let match = url.match(/\/file\/d\/([^\/]+)/);
   if (match && match[1]) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1000';
-
   match = url.match(/id=([^&]+)/);
   if (match && match[1]) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1000';
 
   return url;
 }
 
-// Hàm lấy danh sách dự án
 function getDanhSachDuAn() {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('DuAn');
@@ -182,7 +172,6 @@ function getDanhSachDuAn() {
   }
 }
 
-// Hàm lấy danh sách nhân sự
 function getNhanSuTheoDuAn(idDuAn) {
   try {
     const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhanSu');
@@ -214,7 +203,6 @@ function getNhanSuTheoDuAn(idDuAn) {
   }
 }
 
-// Hàm tải tài liệu scan lên, trả về link MỞ XEM TRỰC TUYẾN
 function uploadFileAndLink(idNhanVien, columnName, fileData, fileName) {
   try {
     const folder = DriveApp.getFolderById(FOLDER_ID);
@@ -243,23 +231,4 @@ function uploadFileAndLink(idNhanVien, columnName, fileData, fileName) {
   } catch (e) {
     return { success: false, error: e.toString() };
   }
-}
-/**
- * Hàm kiểm tra mật khẩu nhà thầu
- */
-function verifyNhaThauPassword(tenNhaThau, inputPass) {
-  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName('NhaThau');
-  if (!sheet) return false; // Trả về false nếu không tìm thấy sheet NhaThau
-  
-  const data = sheet.getDataRange().getValues();
-  // Bỏ qua tiêu đề nếu có (giả sử dòng 1 là tiêu đề)
-  const rows = data.slice(1); 
-  
-  // Tìm nhà thầu trong danh sách (Cột A: Tên, Cột B: Mật khẩu)
-  const nhaThau = rows.find(row => row[0] === tenNhaThau);
-  
-  if (nhaThau && nhaThau[1].toString() === inputPass.toString()) {
-    return true; // Mật khẩu đúng
-  }
-  return false; // Mật khẩu sai
 }
