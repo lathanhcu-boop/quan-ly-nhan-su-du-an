@@ -312,11 +312,12 @@ function tcClickDuAn(index) {
           nsThuocNhaThau.forEach(function(ns) {
             var originalIndex = window.globalNhanSuList.findIndex(function(x) { return x.id === ns.id; });
             
-            // ÉP BUỘC CHỈ IN ẢNH ĐẠI DIỆN HÌNH TRÒN, KHÔNG HIỆN THÊM BẤT KỲ CHỮ GÌ KHÁC bên dưới.
             groupHtml += '<div class="col text-center">';
             groupHtml += '  <div class="card p-2 h-100 border card-custom" onclick="yeuCauMatKhauNhaThau(' + originalIndex + ', \'' + tenNhaThau + '\')">';
             groupHtml += '    <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="mx-auto rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #cbd5e1;">';
-            groupHtml += '    <div class="mt-2"><span class="badge bg-light text-dark border small" style="font-size:10px;">Xem Chi Tiết</span></div>';
+            // Đã bổ sung dòng dưới đây để hiển thị tên nhân viên
+            groupHtml += '    <div class="mt-2 fw-bold text-dark text-truncate" style="font-size: 13px;" title="' + ns.ten + '">' + ns.ten + '</div>';
+            groupHtml += '    <div class="mt-1"><span class="badge bg-light text-dark border small" style="font-size:10px;">Xem Chi Tiết</span></div>';
             groupHtml += '  </div>';
             groupHtml += '</div>';
           });
