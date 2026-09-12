@@ -315,7 +315,6 @@ function tcClickDuAn(index) {
             groupHtml += '<div class="col text-center">';
             groupHtml += '  <div class="card p-2 h-100 border card-custom" onclick="yeuCauMatKhauNhaThau(' + originalIndex + ', \'' + tenNhaThau + '\')">';
             groupHtml += '    <img src="' + chuyenDoiLinkAnh(ns.anh) + '" class="mx-auto rounded-circle shadow-sm" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #cbd5e1;">';
-            // Đã bổ sung dòng dưới đây để hiển thị tên nhân viên
             groupHtml += '    <div class="mt-2 fw-bold text-dark text-truncate" style="font-size: 13px;" title="' + ns.ten + '">' + ns.ten + '</div>';
             groupHtml += '    <div class="mt-1"><span class="badge bg-light text-dark border small" style="font-size:10px;">Xem Chi Tiết</span></div>';
             groupHtml += '  </div>';
@@ -333,7 +332,6 @@ function tcClickDuAn(index) {
     });
 }
 
-// ĐỔI TÊN HÀM XỬ LÝ ĐỂ TRÌNH DUYỆT BẮT BUỘC KHÔNG DÙNG CACHE CŨ
 function yeuCauMatKhauNhaThau(index, tenNhaThau) {
   var mậtKhẩuĐúng = BRET_MAT_KHAU_CONFIG[tenNhaThau] || "123";
   var nhapKhau = prompt("Nhập mật khẩu nhà thầu [" + tenNhaThau + "] để xem chi tiết thông tin hồ sơ:");
@@ -372,7 +370,7 @@ function hienThiChiTietNhanVienMoi(index) {
     { key: 'lltp', label: 'Lý lịch tư pháp' },
     { key: 'cccdScan', label: 'CCCD (Scan)' },
     { key: 'gksk', label: 'Giấy khám sức khỏe' },
-    { key: 'chungChi', label: 'Chứng chỉ ' }
+    { key: 'chungChi', label: 'Chứng chỉ ' },
     { key: 'Khac', label: 'Khác' }
   ];
 
@@ -410,7 +408,7 @@ function handleUploadByIndex(i) {
     { key: 'lltp', column: 'Lý lịch tư pháp' },
     { key: 'cccdScan', column: 'CCCD (Scan)' },
     { key: 'gksk', column: 'Giấy khám sức khỏe' },
-    { key: 'chungChi', column: 'Chứng chỉ' }
+    { key: 'chungChi', column: 'Chứng chỉ' },
     { key: 'Khac', column: 'Khác' }
   ];
   if (loaiHoSo[i]) {
