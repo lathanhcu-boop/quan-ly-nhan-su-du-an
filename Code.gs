@@ -95,7 +95,8 @@ function themNhanSuMoiVoiAnh(data) {
       '',             // 14. ScanCCCD (N)
       '',             // 15. GKSK (O)
       '',             // 16. ChungChi (P)
-      data.sdt        // 17. Số điện thoại (Q)
+      data.sdt,        // 17. Số điện thoại (Q)
+      '',             // 18. Khac (R)
     ];
     sheet.appendRow(rowData);
     return { success: true };
@@ -195,7 +196,8 @@ function getNhanSuTheoDuAn(idDuAn) {
         lltp: row[12] ? row[12].toString() : '',       
         cccdScan: row[13] ? row[13].toString() : '',   
         gksk: row[14] ? row[14].toString() : '',       
-        chungChi: row[15] ? row[15].toString() : ''    
+        chungChi: row[15] ? row[15].toString() : '',
+        khac: row[17] ? row[17].toString() : ''    
       }
     }));
   } catch(e) {
