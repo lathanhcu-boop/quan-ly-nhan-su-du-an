@@ -372,7 +372,8 @@ function hienThiChiTietNhanVienMoi(index) {
     { key: 'lltp', label: 'Lý lịch tư pháp' },
     { key: 'cccdScan', label: 'CCCD (Scan)' },
     { key: 'gksk', label: 'Giấy khám sức khỏe' },
-    { key: 'chungChi', label: 'Chứng chỉ' }
+    { key: 'chungChi', label: 'Chứng chỉ ' }
+    { key: 'Khac', label: 'Khác' }
   ];
 
   var containerHoSo = document.getElementById('listHoSo');
@@ -410,6 +411,7 @@ function handleUploadByIndex(i) {
     { key: 'cccdScan', column: 'CCCD (Scan)' },
     { key: 'gksk', column: 'Giấy khám sức khỏe' },
     { key: 'chungChi', column: 'Chứng chỉ' }
+    { key: 'Khac', column: 'Khác' }
   ];
   if (loaiHoSo[i]) {
     handleUpload(loaiHoSo[i].key, loaiHoSo[i].column);
